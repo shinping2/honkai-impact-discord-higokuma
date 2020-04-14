@@ -1,0 +1,24 @@
+{
+  "name": "honkai-impact-discord-higokuma",
+  "version": "1.0.0",
+  "description": "honkai-impact-discord-higokuma",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "heroku": "heroku local",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "dom-parser": "*",
+    "node-fetch": "*",
+    "lodash": "*"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  }
+}
