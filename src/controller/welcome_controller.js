@@ -16,7 +16,7 @@ const ROLE_NORTH_AMERICA = 'North America';
 const RANDOM_WELCOME_TITLES = [
   'Aloha Captain ${member}! Here is a lei for you 🌺',
   'Greeting Captain ${member}. Thanks for coming 😀',
-  'Warmest welsome, Captain ${member} 😍',
+  'Warmest welcome, Captain ${member} 😍',
   'Hello Captain ${member}. Glad to see you here 🎉',
   'Welcome to our hyperion, Captain ${member}. Have a free cookie on us 🍪',
   'Thanks for visiting our hyperion, Captain ${member} 😊',
@@ -37,7 +37,7 @@ class WelcomeController {
     const guild = member.guild;
     let cafeteriaChannel = CHANNEL_CAFETERIA;
     let welcomeChannel = CHANNEL_WELCOME;
-    for (const [id, channel] of guild.channels.entries()) {
+    for (const [id, channel] of guild.channels.cache.entries()) {
       if (channel.name.endsWith(CHANNEL_CAFETERIA)) {
         cafeteriaChannel = channel;
       } else if (channel.name.endsWith(CHANNEL_WELCOME)) {
@@ -54,13 +54,13 @@ class WelcomeController {
     const reverseSearchUrl =
         ImageSearchUrlController.createGoogleImageSearchUrl(thumbnail);
     const randomIndex = Math.floor(Math.random() * RANDOM_WELCOME_TITLES.length);
-    const title = _.template(RANDOM_WELCOME_TITLES[randomIndex])({member});
+    const title = _.template(RANDOM_WELCOME_TITLES[randomIndex])({member: `<@${member.user.id}>`});
     let description = `${title}
   Please join us in ${cafeteriaChannel}. Our Armada ID in game is: ${ARMADA_ID}`
     if (reverseSearchUrl) {
       description = description + '\n' + `[[find img]](${reverseSearchUrl})`;
     }
-    const embedMessage = new Discord.RichEmbed()
+    const embedMessage = new Discord.MessageEmbed()
         .setDescription(description)
         .setThumbnail(thumbnail)
     welcomeChannel.send(embedMessage);

@@ -50,7 +50,7 @@ class ImageSearchUrlController {
               .join(', ');
       const description =
           `${httpUrlText}\nIf the above link doesn't work, try ${httpsUrlText}`;
-      const embedMessage = new Discord.RichEmbed().setDescription(description);
+      const embedMessage = new Discord.MessageEmbed().setDescription(description);
       msg.reply(embedMessage);
     }
   }
@@ -93,7 +93,7 @@ class ImageSearchUrlController {
       }
 
       lastUserIdImageUrlsModel = userIdImageUrlsModel;
-      i += 1;
+      i ++;
       if (_.isNaN(index) || index === i) {
         return lastUserIdImageUrlsModel;
       }

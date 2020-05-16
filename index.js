@@ -9,11 +9,15 @@ const _ = require('lodash');
 const Constants = require('./src/util/constants.js');
 const FindImageController = require('./src/controller/find_image_controller.js');
 const ImageSearchUrlController = require('./src/controller/image_search_url_controller.js');
+const LanguageTranslator = require('./src/controller/language_translator.js');
 const WelcomeController = require('./src/controller/welcome_controller.js');
 
 const client = new Discord.Client();
 const findImageController = new FindImageController();
 const imageUrlManager = new ImageSearchUrlController(client);
+
+const PopulateFakeModels = require('./tests/controller/populate_fake_models.js');
+PopulateFakeModels.populateFakeModels(imageUrlManager);
 
 const INVALID_INDEX = -1;
 const ACTION_CUDDLE = 'cuddle';
@@ -42,6 +46,8 @@ client.on('message', msg => {
     // check if the command is ?img
     if (msg.content.startsWith(`${Constants.COMMAND_PREFIX}img`)) {
       imageUrlManager.sendImageSearchUrls(msg);
+    } else if (msg.content.startsWith(`${Constants.COMMAND_PREFIX}jp`)) {
+      LanguageTranslator.replyWithJapaneseTranslation(msg);
     } else if (msg.content.startsWith(`${Constants.COMMAND_PREFIX}search`)) {
       findImageController.sendImageSearchUrls(msg);
     } else {

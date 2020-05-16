@@ -138,7 +138,7 @@ class FindImageController {
           ImageSearchUrlController.createGoogleImageSearchUrl(thumbnail);
       let title = action ? `${action} ` : '';
       const description = `${title}[[find img]](${reverseSearchUrl})`;
-      const embedMessage = new Discord.RichEmbed()
+      const embedMessage = new Discord.MessageEmbed()
           .setDescription(description)
           .setImage(thumbnail);
       msg.reply(embedMessage);
