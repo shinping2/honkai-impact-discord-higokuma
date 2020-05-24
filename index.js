@@ -10,6 +10,7 @@ const Constants = require('./src/util/constants.js');
 const FindImageController = require('./src/controller/find_image_controller.js');
 const ImageSearchUrlController = require('./src/controller/image_search_url_controller.js');
 const LanguageTranslator = require('./src/controller/language_translator.js');
+const DisplayNoticeController = require('./src/controller/display_notice_controller.js');
 const WelcomeController = require('./src/controller/welcome_controller.js');
 
 const client = new Discord.Client();
@@ -50,6 +51,10 @@ client.on('message', msg => {
       LanguageTranslator.replyWithJapaneseTranslation(msg);
     } else if (msg.content.startsWith(`${Constants.COMMAND_PREFIX}search`)) {
       findImageController.sendImageSearchUrls(msg);
+    } else if (msg.content.startsWith(`${Constants.COMMAND_PREFIX}notice2`)) {
+      DisplayNoticeController.displayNotice2(msg);
+    } else if (msg.content.startsWith(`${Constants.COMMAND_PREFIX}notice`)) {
+      DisplayNoticeController.displayNotice(msg);
     } else {
       const words = msg.content.split(' ');
       if (words.length > 0) {
