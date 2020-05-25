@@ -6,8 +6,8 @@ const Constants = require('../util/constants.js');
 
 const SCHEMA_HTTP = 'http';
 const SCHEMA_HTTPS = 'https';
+const FIND_HTTP_IMAGE = 'find http img';
 const FIND_IMAGE = 'find img';
-const FIND_HTTPS_IMAGE = 'find https img';
 
 class ImageSearchUrlController {
   constructor(client) {
@@ -34,7 +34,6 @@ class ImageSearchUrlController {
     const cachedUserIdImageUrlsModel = this.findCachedImageUrlsModel_(mentionedUser, index);
     const unfilteredImageUrls = _.get(cachedUserIdImageUrlsModel, 'imageUrls');
     const imageUrls = Array.from(new Set(unfilteredImageUrls));
-    console.log(imageUrls);
     if (_.isEmpty(imageUrls)) {
       const mentionedUserName = _.get(mentionedUser, 'username');
       const message = mentionedUserName
@@ -42,20 +41,19 @@ class ImageSearchUrlController {
           : `Cannot find any recent image url`;
       msg.author.send(message);
     } else {
-      const httpUrlText =
+      const httpsUrlText =
           ImageSearchUrlController.createGoogleImageSearchUrlText(imageUrls, FIND_IMAGE)
               .join(', ');
-      const httpsUrlText =
-          ImageSearchUrlController.createGoogleImageSearchUrlText(imageUrls, FIND_HTTPS_IMAGE, true)
+      const httpUrlText =
+          ImageSearchUrlController.createGoogleImageSearchUrlText(imageUrls, FIND_HTTP_IMAGE, false)
               .join(', ');
-      const description =
-          `${httpUrlText}\nIf the above link doesn't work, try ${httpsUrlText}`;
+      const description = `${httpsUrlText}\nIf the above link doesn't work, try ${httpUrlText}`;
       const embedMessage = new Discord.MessageEmbed().setDescription(description);
-      msg.reply(embedMessage);
+      msg.reply(embedMessage); 
     }
   }
 
-  static createGoogleImageSearchUrl(imageUrl, allowHttps = false) {
+  static createGoogleImageSearchUrl(imageUrl, allowHttps = true) {
     if (!imageUrl) {
       return undefined;
     }
@@ -65,7 +63,7 @@ class ImageSearchUrlController {
     return Constants.GOOGLE_IMAGES_SEARCH_BASE_URL + encodeURIComponent(imageUrl);
   }
 
-  static createGoogleImageSearchUrlText(imageUrls, title, allowHttps = false) {
+  static createGoogleImageSearchUrlText(imageUrls, title, allowHttps) {
     return _.map(imageUrls, imageUrl => {
       const searchUrl = this.createGoogleImageSearchUrl(imageUrl, allowHttps);
       return `[[${title}]](${searchUrl})`;

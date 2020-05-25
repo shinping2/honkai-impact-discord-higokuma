@@ -54,7 +54,7 @@ class WelcomeController {
     const reverseSearchUrl =
         ImageSearchUrlController.createGoogleImageSearchUrl(thumbnail);
     const randomIndex = Math.floor(Math.random() * RANDOM_WELCOME_TITLES.length);
-    const title = _.template(RANDOM_WELCOME_TITLES[randomIndex])({member: `<@${member.user.id}>`});
+    const title = _.template(RANDOM_WELCOME_TITLES[randomIndex])({member: `${member.user}`});
     let description = `${title}
   Please join us in ${cafeteriaChannel}. Our Armada ID in game is: ${ARMADA_ID}`
     if (reverseSearchUrl) {

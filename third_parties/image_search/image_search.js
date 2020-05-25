@@ -26,9 +26,9 @@ class ImageSearch {
       // Fetches Items from Google Image Search URL
       fetch("https://www.google.com.ua/search?source=lnms&sa=X&gbv=1&tbm=isch&q="+query)
       .then( res => res.text() )
-      .then( res => {
+      .then(/* String */ html => {
         const parser = new DomParser();
-        const dom = parser.parseFromString(res);
+        const dom = parser.parseFromString(html);
 
         const allImageNodes = dom.getElementsByTagName('img');
         const imageNodes = allImageNodes.slice(4);

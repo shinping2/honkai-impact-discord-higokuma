@@ -4,33 +4,35 @@ const _ = require('lodash');
 
 const ImageSearchUrlController = require('./image_search_url_controller.js');
 
-const ACTIONS = [
-  'awoo',
-  'blush',
-  'confused',
-  'cuddle',
-  'dance',
-  'howl',
-  'hug',
-  'idk',
-  'insult',
+const ACTION_TO_FORMAT_MAP = {
+  'awoo': ['${author} went awoo', '${author} went awoo at ${user}'],
+  'blush': ['${author} is blushing', '${user} makes ${author} blushing'],
+  'confused': ['${author} is confused', '${user} makes ${author} confused'],
+  'cuddle': ['${author} wants to cuddle', '${author} wants to cuddle ${user}'],
+  'dance': ['${author} wants to dance (^○^)', '${author} wants to dance with ${user} (^○^)'],
+  'howl': ['${author} wants to howl', '${author} wants to howl with ${user}'],
+  'hug': ['${author} wants to hug', '${author} wants to hug ${user}'],
+  'idk': ['${author} shows ¯\\_(ツ)_/¯', '${author} shows ¯\\_(ツ)_/¯ to ${user}'],
+  'insult': ['${author} is insulting at air (>皿<)', '${author} wants to insult ${user} (>皿<)'],
   // 'kiss',
   // 'lick',
-  'neko',
-  'nyan',
-  'pat',
-  'poke',
-  'punch',
-  'pout',
-  'sleepy',
-  'shrug',
-  'teehee',
-  'triggered',
-  'smile',
-  'slap',
-  'stare',
-  'wasted',
-];
+  'neko': ['${author} went neko 🐱', '${author} wants to shows a neko 🐱 to ${user}'],
+  'nyan': ['${author} went ＾○ ⋏ ○＾', '${author} greets ${user} with a ＾○ ⋏ ○＾'],
+  'pat': ['${author} wants to pat someone', '${author} wants to pat ${user}'],
+  'poke': ['${author} wants to poke at air', '${author} wants to poke ${user}'],
+  'punch': ['${author} is doing air boxing', '${author} wants to punch ${user}'],
+  'pout': ['${author} is pouting', '${user} makes ${author} pout'],
+  'sleepy': ['${author} is sleepy (´〜｀*) zzz', '${author} wants to dance with ${user}'],
+  'shrug': ['${author} shows ¯\\_(ツ)_/¯', '${author} shows ¯\\_(ツ)_/¯ to ${user}'],
+  'teehee': ['${author} shows ๑╹U╹)', '${author} shows ๑╹U╹) to ${user}'],
+  'triggered': ['${author} is triggered (>皿<)', '${user} triggered ${author} (>皿<)'],
+  'smile': ['${author} is smiling (^○^)', '${user} made ${author} smiles (^○^)'],
+  'slap': ['${author} wants to slap at air', '${author} wants to slap ${user}'],
+  'stare': ['${author} is staring at air', '${author} is staring at ${user}'],
+  'wasted': ['${author} wants to waste something', '${author} wants to make ${user} wasted'],
+};
+
+const ACTIONS = Object.keys(ACTION_TO_FORMAT_MAP);
 
 const ACTION_SET = new Set(ACTIONS);
 
@@ -132,12 +134,13 @@ class FindImageController {
         msg.author.send('Cannot find any image.');
         return;
       }
+      
       const index = Math.floor(thumbnails.length * Math.random());
       const thumbnail = thumbnails[index];
       const reverseSearchUrl =
           ImageSearchUrlController.createGoogleImageSearchUrl(thumbnail);
-      let title = action ? `${action} ` : '';
-      const description = `${title}[[find img]](${reverseSearchUrl})`;
+      const title = action ? FindImageController.getActionTitle_(msg, action) : '';
+      const description = `${title}\n[[find img]](${reverseSearchUrl})`;
       const embedMessage = new Discord.MessageEmbed()
           .setDescription(description)
           .setImage(thumbnail);
@@ -147,6 +150,29 @@ class FindImageController {
       }
     })
     .catch(console.log);
+  }
+
+  static getActionTitle_(/* Message */ msg, /* String */ action) {
+    if (action) {
+      const [authorTemplate, authorAndTargetTemplate] = ACTION_TO_FORMAT_MAP[action];
+      const mentionedIDAndUserTupleArray = msg.mentions.users;
+      if (_.size(mentionedIDAndUserTupleArray) > 0) {
+        const userIdList = Object.keys(mentionedIDAndUserTupleArray);
+        let mentionedUserStringArray = [];
+        for (let mentionedIDAndUserTuple of mentionedIDAndUserTupleArray) {
+          const mentionedUser = mentionedIDAndUserTuple[1];
+          mentionedUserStringArray.push(`${mentionedUser}`);
+        }
+        const tokenMap = {
+          author: `${msg.author}`,
+          user: mentionedUserStringArray,
+        };
+        return _.template(authorAndTargetTemplate)(tokenMap);
+      } else {
+        return _.template(authorTemplate)({author: `${msg.author}`});
+      }
+    }
+    return '';
   }
 
   static findSecondWord_(text) {
