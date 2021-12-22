@@ -2,17 +2,13 @@ const Discord = require('discord.js');
 const DomParser = require('dom-parser');
 const fetch = require("node-fetch");
 
+const ServerConstants = require('../util/server_constants.js');
+
 const PARAGRAPH_TAG = 'p';
-
-const EDITABLE_NOTICE_DOC_URL = 'https://docs.google.com/document/d/1-itkM-Gqg4d97CIne9nH69zyaqDv_fCXG-7HflREzSs/edit';
-const STATIC_NOTICE_DOC_URL = 'https://docs.google.com/document/u/0/d/1-itkM-Gqg4d97CIne9nH69zyaqDv_fCXG-7HflREzSs/mobilebasic';
-
-const EDITABLE_NOTICE_2_DOC_URL = 'https://docs.google.com/document/d/1zA3-nT0iRBv-cXDOOeO5sxyttoEeEsgsnrAgw55oVbs/edit';
-const STATIC_NOTICE_2_DOC_URL = 'https://docs.google.com/document/u/0/d/1zA3-nT0iRBv-cXDOOeO5sxyttoEeEsgsnrAgw55oVbs/mobilebasic';
 
 /** Translate one language to another language. */
 class DisplayNoticeController {
-  static fetchDocText_(/* String */ docUrl) {
+  static fetchDocText(/* String */ docUrl) {
     const options = {
       headers: {
         'user-agent': `Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Mobile Safari/537.36`,
@@ -40,15 +36,15 @@ class DisplayNoticeController {
   }
 
   static displayNotice(/* Discord.Message */ msg) {
-    this.displayTextWithUrl_(msg, STATIC_NOTICE_DOC_URL, EDITABLE_NOTICE_DOC_URL);
+    this.displayTextWithUrl_(msg, ServerConstants.STATIC_NOTICE_DOC_URL, ServerConstants.EDITABLE_NOTICE_DOC_URL);
   }
 
   static displayNotice2(/* Discord.Message */ msg) {
-    this.displayTextWithUrl_(msg, STATIC_NOTICE_2_DOC_URL, EDITABLE_NOTICE_2_DOC_URL);
+    this.displayTextWithUrl_(msg, ServerConstants.STATIC_NOTICE_2_DOC_URL, ServerConstants.EDITABLE_NOTICE_2_DOC_URL);
   }
 
   static displayTextWithUrl_(/* Discord.Message */ msg, /* String */ staticDocUrl, /* String */ editDocUrl) {
-    this.fetchDocText_(staticDocUrl)
+    this.fetchDocText(staticDocUrl)
     .then(/* String */ paragraph => {
       if (paragraph && paragraph.length > 0) {
         const description = `${paragraph}\n[[link]](${editDocUrl})`;

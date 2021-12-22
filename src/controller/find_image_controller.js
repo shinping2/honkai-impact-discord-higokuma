@@ -1,6 +1,8 @@
 const Discord = require('discord.js');
-const GoogleImageSearch = require('../../third_parties/image_search/image_search.js')
 const _ = require('lodash');
+
+const GoogleImageSearch = require('../../third_parties/image_search/image_search.js');
+const AnimeNameUtils = require('../util/anime_name_utils.js');
 
 const ImageSearchUrlController = require('./image_search_url_controller.js');
 
@@ -36,48 +38,6 @@ const ACTIONS = Object.keys(ACTION_TO_FORMAT_MAP);
 
 const ACTION_SET = new Set(ACTIONS);
 
-const KEYWORDS = [
-  'Angel Beats',
-  'Ansatsu Kyoushitsu',
-  'Akagami Shirayuki-hime',
-  'Boku dake ga Inai Machi',
-  'Charlotte',
-  'Chuunibyou',
-  'Clannad',
-  'Evergarden',
-  'Fruits Basket',
-  'Gabriel',
-  'Grimgar',
-  'Hataraku Maou-sama',
-  'Hyouka',
-  'K-On',
-  'Kaguya-sama',
-  'Kaichou',
-  'Kamisama',
-  'Kokoro',
-  'Kyoukai',
-  'Lucky',
-  'Madoka',
-  'Masamune-kun',
-  'Nisemonogatari',
-  'Nisekoi',
-  'Noragami',
-  'Ookami',
-  'Ouran',
-  'ReLIFE',
-  'Saenai',
-  'Steins Gate',
-  'Suzumiya',
-  'Tate no Yuusha no Nariagari',
-  'Toaru Kagaku',
-  'Toradora',
-  'Umaru-chan',
-  'Yahari',
-  'Yakuindomo',
-  'Yuri',
-  '盾勇者',
-];
-
 const EXTRA_KEYWORD = ' kawaii gif';
 
 /** Find images via DuckDuckGo. */
@@ -91,9 +51,7 @@ class FindImageController {
       if (!action && this.cached_thumbnails_.size > 100) {
         resolve(Array.from(this.cached_thumbnails_));
       } else {
-        const index = Math.floor(KEYWORDS.length * Math.random());
-        const query = KEYWORDS[index] + EXTRA_KEYWORD;
-
+        const query = AnimeNameUtils.getRandomAnimeName() + EXTRA_KEYWORD;
         GoogleImageSearch.searchImage(query)
         .then(thumbnails => {
           if (!action) {
